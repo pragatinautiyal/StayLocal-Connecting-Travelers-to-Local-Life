@@ -4,9 +4,8 @@ A platform that helps travelers experience authentic local culture by connecting
 
 ## Tech Stack
 Frontend: React / Next.js  
-Backend: Node.js / Express  
-Database: MongoDB  
-AI: OpenAI API (planned)
+Backend:  Python/ Fast API
+Database: MongoDB via Atlas
 
 ## Setup
 Coming soon
