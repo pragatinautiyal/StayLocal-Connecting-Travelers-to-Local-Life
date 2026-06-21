@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
+import { Input, Button } from "../components/ui";
+import { useNavigate } from "react-router-dom";
 
 export default function Hero() {
+  const navigate = useNavigate();
   return (
     <section className="relative w-full overflow-hidden">
       {/* Background */}
@@ -30,11 +32,7 @@ export default function Hero() {
 
             {/* Search */}
             <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3">
-              <input
-                type="text"
-                placeholder="Search destination"
-                className="w-full p-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-green-700"
-              />
+              <Input placeholder="Search destination" type="text" />
 
               <select className="w-full p-3 border border-gray-300 rounded-xl">
                 <option>Budget Range</option>
@@ -53,12 +51,10 @@ export default function Hero() {
 
             {/* Button */}
             <div className="mt-6">
-              <Link
-                to="/explore"
-                className="inline-flex items-center justify-center px-8 py-3 bg-green-700 hover:bg-green-800 text-white rounded-full shadow-lg transition"
-              >
-                Explore Stays
-              </Link>
+              <Button
+                label="Explore Stays"
+                onClick={() => navigate("/explore")}
+              />
             </div>
           </div>
         </div>

@@ -1,7 +1,18 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Input, Button, Toast } from "../components/ui";
+import { useState, useEffect } from "react";
 
 export default function Login() {
+  const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
@@ -16,26 +27,24 @@ export default function Login() {
             Login to access your StayLocal account or manage your homestays.
           </p>
 
-          <div className="mt-8 p-6 border rounded-2xl shadow-sm">
-            <label className="text-sm text-gray-700">Email</label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full mt-1 mb-4 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-green-700"
+          <div className="mt-8 p-6 border rounded-2xl shadow-sm flex flex-col gap-5 bg-white border-gray-200">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-700">Email</label>
+              <Input type="email" placeholder="Enter your email" />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-700">Password</label>
+              <Input type="password" placeholder="Enter your password" />
+            </div>
+
+            <Button
+              label="Login"
+              onClick={() => setToast("Login successful!")}
+              className="w-full"
             />
 
-            <label className="text-sm text-gray-700">Password</label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              className="w-full mt-1 p-3 border rounded-lg outline-none focus:ring-2 focus:ring-green-700"
-            />
-
-            <button className="w-full mt-6 bg-green-800 text-white py-3 rounded-full hover:bg-green-900 transition">
-              Login
-            </button>
-
-            <div className="text-center mt-4 text-sm text-gray-600">
+            <div className="text-center text-sm text-gray-600">
               Don’t have an account?{" "}
               <span className="text-green-800 font-medium cursor-pointer">
                 Register
@@ -44,6 +53,8 @@ export default function Login() {
           </div>
         </div>
       </main>
+
+      <Toast message={toast} />
 
       <Footer />
     </div>

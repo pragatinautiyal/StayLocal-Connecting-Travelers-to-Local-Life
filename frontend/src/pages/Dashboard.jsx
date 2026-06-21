@@ -1,5 +1,6 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Button } from "../components/ui";
 
 export default function Dashboard() {
   return (
@@ -8,11 +9,11 @@ export default function Dashboard() {
 
       <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
-          <h1 className="text-3xl font-bold text-gray-800 text-center sm:text-left">
+          <h1 className="text-3xl font-bold text-gray-800 text-center">
             Provider Dashboard
           </h1>
 
-          <p className="mt-2 text-gray-600 text-center sm:text-left max-w-2xl">
+          <p className="mt-3 text-gray-600 text-center max-w-2xl mx-auto">
             Manage your homestay listings, monitor bookings, and update seasonal
             pricing to attract more travelers.
           </p>
@@ -52,9 +53,9 @@ export default function Dashboard() {
                 Add new homestays, edit details, and update availability.
               </p>
 
-              <button className="mt-4 w-full sm:w-auto px-5 py-2 bg-green-800 text-white rounded-full hover:bg-green-900 transition">
-                Go to Listings
-              </button>
+              <div className="mt-4">
+                <Button label="Go to Listings" />
+              </div>
             </div>
 
             <div className="p-6 border rounded-2xl">
@@ -65,9 +66,9 @@ export default function Dashboard() {
                 Adjust prices based on demand, season, and tourism flow.
               </p>
 
-              <button className="mt-4 w-full sm:w-auto px-5 py-2 bg-green-800 text-white rounded-full hover:bg-green-900 transition">
-                Update Pricing
-              </button>
+              <div className="mt-4">
+                <Button label="Update Pricing" />
+              </div>
             </div>
           </div>
         </div>

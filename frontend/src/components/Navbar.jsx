@@ -4,71 +4,102 @@ import { Link } from "react-router-dom";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
+  const leftItems = [
+    { name: "Home", path: "/" },
+    { name: "Explore", path: "/explore" },
+    { name: "Dashboard", path: "/dashboard" },
+  ];
+
+  const rightItems = [
+    { name: "Settings", path: "/settings" },
+    { name: "Login", path: "/login" },
+  ];
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link
           to="/"
-          className="text-xl font-bold text-green-600 transition-transform duration-300 hover:scale-105"
+          className="text-xl font-bold text-green-600 hover:scale-105 transition"
         >
           StayLocal
         </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex space-x-8">
-          {["Home", "Explore", "Dashboard", "Login"].map((item) => (
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center space-x-6">
+          {/* Left links */}
+          {leftItems.map((item) => (
             <Link
-              key={item}
-              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-              className="relative text-gray-700 hover:text-green-600 transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-0 after:bg-green-600 after:transition-all after:duration-300 hover:after:w-full"
+              key={item.name}
+              to={item.path}
+              className="text-gray-700 hover:text-green-600 transition"
             >
-              {item}
+              {item.name}
             </Link>
           ))}
+
+          {/* Divider */}
+          <div className="h-6 w-px bg-gray-300 mx-2"></div>
+
+          {/* AI Planner */}
+          <Link
+            to="/ai"
+            className="relative px-5 py-2 rounded-lg font-medium text-white 
+            bg-gradient-to-r from-green-500 via-emerald-500 to-green-600
+            shadow-lg shadow-green-500/30
+            hover:shadow-green-500/50 hover:scale-105
+            transition-all duration-300"
+          >
+            ✨ AI Planner
+          </Link>
+
+          {/* Right links */}
+          {rightItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className="text-gray-700 hover:text-green-600 transition"
+            >
+              {item.name}
+            </Link>
+          ))}
+
+          {/* Profile */}
+          <div className="text-2xl cursor-pointer hover:scale-110 transition text-gray-700">
+            👤
+          </div>
         </div>
 
-        {/* Profile Icon */}
-        <div className="hidden md:block text-2xl cursor-pointer hover:scale-110 transition">
-          👤
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button className="md:hidden text-2xl" onClick={() => setOpen(!open)}>
+        {/* Mobile button */}
+        <button
+          className="md:hidden text-2xl text-gray-700"
+          onClick={() => setOpen(!open)}
+        >
           ☰
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       {open && (
-        <div className="md:hidden px-6 pb-4 space-y-3">
+        <div className="md:hidden px-6 pb-4 space-y-3 bg-white border-t border-gray-200">
+          {[...leftItems, ...rightItems].map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              onClick={() => setOpen(false)}
+              className="block text-gray-700 hover:text-green-600"
+            >
+              {item.name}
+            </Link>
+          ))}
+
           <Link
-            className="block text-gray-700"
-            to="/"
+            to="/ai"
             onClick={() => setOpen(false)}
+            className="block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-center"
           >
-            Home
-          </Link>
-          <Link
-            className="block text-gray-700"
-            to="/explore"
-            onClick={() => setOpen(false)}
-          >
-            Explore
-          </Link>
-          <Link
-            className="block text-gray-700"
-            to="/dashboard"
-            onClick={() => setOpen(false)}
-          >
-            Dashboard
-          </Link>
-          <Link
-            className="block text-gray-700"
-            to="/login"
-            onClick={() => setOpen(false)}
-          >
-            Login
+            ✨ AI Planner
           </Link>
         </div>
       )}

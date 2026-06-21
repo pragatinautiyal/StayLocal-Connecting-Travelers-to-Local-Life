@@ -1,3 +1,4 @@
+import { Button } from "../components/ui";
 export default function Card({ title, description, image, price }) {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 hover:-translate-y-1 flex flex-col">
@@ -24,9 +25,11 @@ export default function Card({ title, description, image, price }) {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 gap-3">
           <p className="text-green-700 font-bold text-base">₹{price}/night</p>
 
-          <button className="w-full sm:w-auto px-4 py-2 bg-green-800 text-white text-sm rounded-full hover:bg-green-900 transition">
-            View Details
-          </button>
+          <Button
+            label="View Details"
+            onClick={() => console.log(title)}
+            variant="secondary"
+          />
         </div>
       </div>
     </div>
