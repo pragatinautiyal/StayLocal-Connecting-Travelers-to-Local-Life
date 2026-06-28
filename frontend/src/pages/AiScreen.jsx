@@ -10,29 +10,61 @@ export default function AIPlanner() {
   const [type, setType] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState("");
 
-  const handleGenerate = () => {
-    setLoading(true);
+  const handleGenerate = async () => {
+    setResults([]);
+    if (!budget || !season || !type) {
+      setToast("Please fill all fields");
 
-    setTimeout(() => {
-      setResults([
-        {
-          title: "Himalayan Retreat",
-          description: "Perfect for peaceful mountain experience.",
-          price: "1200",
+      setTimeout(() => {
+        setToast("");
+      }, 3000);
+
+      return;
+    }
+    try {
+      setLoading(true);
+
+      const response = await fetch("http://127.0.0.1:8000/api/ai-planner", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        {
-          title: "Kerala Village Stay",
-          description: "Relaxing backwater and village lifestyle.",
-          price: "900",
-        },
-      ]);
+        body: JSON.stringify({
+          budget: Number(budget),
+          season,
+          travel_type: type,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate recommendations");
+      }
+
+      const data = await response.json();
+
+      setResults(data.recommendations);
+    } catch (error) {
+      console.error(error);
+
+      setToast("Failed to load recommendations");
+
+      setTimeout(() => {
+        setToast("");
+      }, 3000);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 transition-colors duration-300">
+      {toast && (
+        <div className="fixed top-5 right-5 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+          {toast}
+        </div>
+      )}
       <Navbar />
 
       <main className="flex-1 w-full">
@@ -63,7 +95,10 @@ export default function AIPlanner() {
                 onChange={(e) => setType(e.target.value)}
               />
 
-              <Button label="Generate" onClick={handleGenerate} />
+              <Button
+                label={loading ? "Generating..." : "Generate"}
+                onClick={handleGenerate}
+              />
             </div>
           </div>
 
@@ -80,10 +115,26 @@ export default function AIPlanner() {
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {results.map((item, i) => (
-                  <Card key={i} {...item} />
+                {results.map((item) => (
+                  <div key={item.id}>
+                    <div className="mb-2 text-center text-green-600 font-semibold">
+                      Match Score: {item.score}%
+                    </div>
+
+                    <Card
+                      title={item.title}
+                      description={item.description}
+                      image={item.image}
+                      price={item.price}
+                    />
+                  </div>
                 ))}
               </div>
+            </div>
+          )}
+          {!loading && results.length === 0 && budget && season && type && (
+            <div className="mt-8 text-center text-gray-500 dark:text-gray-400">
+              No matching stays found.
             </div>
           )}
         </div>

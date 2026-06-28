@@ -1,14 +1,47 @@
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Card from "../components/Card";
-
-import mountain from "../assets/mountain.jpg";
-import village from "../assets/village.jpg";
-import forest from "../assets/forest.jpeg";
+import { Loader } from "../components/ui";
 
 export default function Explore() {
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/listings")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to load listings");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setListings(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching listings:", error);
+
+        setToast("Failed to load listings");
+
+        setTimeout(() => {
+          setToast("");
+        }, 3000);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 transition-colors duration-300">
+      {toast && (
+        <div className="fixed top-5 right-5 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+          {toast}
+        </div>
+      )}
+
       <Navbar />
 
       <main className="flex-1 w-full">
@@ -22,28 +55,27 @@ export default function Explore() {
             across India based on your budget and travel style.
           </p>
 
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card
-              title="Village Life Homestay"
-              description="Peaceful balcony stay surrounded by rural fields and authentic village life."
-              image={village}
-              price="800"
-            />
-
-            <Card
-              title="Mountain View Homestay"
-              description="Luxury balcony room overlooking majestic Himalayan mountains."
-              image={mountain}
-              price="1200"
-            />
-
-            <Card
-              title="Forest View Homestay"
-              description="Cozy balcony room surrounded by forests, greenery, and natural waterfalls."
-              image={forest}
-              price="1500"
-            />
-          </div>
+          {loading ? (
+            <div className="mt-16 flex justify-center">
+              <Loader />
+            </div>
+          ) : listings.length === 0 ? (
+            <div className="mt-10 text-center text-gray-500 dark:text-gray-400">
+              No listings available.
+            </div>
+          ) : (
+            <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {listings.map((listing) => (
+                <Card
+                  key={listing.id}
+                  title={listing.title}
+                  description={listing.description}
+                  image={listing.image}
+                  price={listing.price}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </main>
 
