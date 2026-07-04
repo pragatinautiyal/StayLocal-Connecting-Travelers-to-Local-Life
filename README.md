@@ -1,117 +1,228 @@
 # StayLocal – Connecting Travelers to Local Life
 
-A platform that helps travelers experience authentic local culture by connecting them with locals and discovering unique homestays and local experiences.
-
-## Tech Stack
-
-**Frontend:** React / Next.js
-
-**Backend:** Python, FastAPI
-
-**Database:** MongoDB Atlas
+StayLocal is an AI-assisted full-stack web application that helps travelers discover authentic local experiences by connecting them with local hosts offering homestays and unique stays. The platform provides secure role-based access for Hosts and Travellers, allowing hosts to manage listings while travelers can explore destinations and receive AI-powered travel recommendations.
 
 ---
 
-## Backend Features
+# Tech Stack
 
-* REST API built with FastAPI
-* CRUD operations for listings
-* Search listings by location
-* Proper HTTP status codes
-* JSON-based API responses
-* Global exception handling
-* CORS configuration enabled
-* Interactive API documentation using Swagger UI
+**Frontend**
+- React.js
+- React Router
+- Tailwind CSS
 
----
+**Backend**
+- Python
+- FastAPI
 
-## API Endpoints
-
-| Method | Endpoint                         | Description                 |
-| ------ | -------------------------------- | --------------------------- |
-| GET    | `/`                              | Home route                  |
-| GET    | `/api/listings`                  | Get all listings            |
-| GET    | `/api/listings/{listing_id}`     | Get a single listing        |
-| POST   | `/api/listings`                  | Create a new listing        |
-| PUT    | `/api/listings/{listing_id}`     | Update a listing            |
-| DELETE | `/api/listings/{listing_id}`     | Delete a listing            |
-| GET    | `/api/listings/search?location=` | Search listings by location |
+**Database**
+- MongoDB Atlas
 
 ---
 
-## How to Run Backend Locally
+# Database Choice
 
-### 1. Clone the Repository
+StayLocal uses **MongoDB Atlas**, a cloud-based NoSQL database.
 
-```bash
-git clone <repository-url>
-cd <repository-name>/Backend
+### Why MongoDB?
+
+- Flexible document-based schema suitable for listing data.
+- Easily stores nested and dynamic data.
+- Integrates seamlessly with FastAPI.
+- Cloud-hosted with automatic backups and high availability.
+- Scalable for future features such as bookings, reviews, wishlists, and AI recommendations.
+
+---
+
+# Database Schema
+
+> Replace the image path below with your exported schema diagram.
+
+![StayLocal Database Schema]
+<img width="719" height="538" alt="Screenshot 2026-07-04 192442" src="https://github.com/user-attachments/assets/50af37c4-0cb4-47a5-801b-bdf7681ce426" />
+
+
+
+---
+
+# Current Database Entities
+
+## User
+
+- _id (Primary Key)
+- fullName
+- email
+- password
+- role (Host / Traveller)
+- phone
+- profileImage
+- isVerified
+- verificationStatus
+
+## Listing
+
+- id (Primary Key)
+- hostId (Foreign Key → User._id)
+- title
+- description
+- location
+- price
+- category
+- season
+- image
+
+---
+
+# Backend Features
+
+- JWT Authentication
+- Role-Based Authorization
+- Protected Routes
+- Host Dashboard
+- Traveller Dashboard
+- CRUD Operations for Listings
+- AI Travel Planner
+- Search Listings by Location
+- Image Upload Support
+- MongoDB Atlas Integration
+- Global Exception Handling
+- CORS Configuration
+- Interactive Swagger API Documentation
+
+---
+
+# API Endpoints
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/` | Home Route |
+| POST | `/register` | Register User |
+| POST | `/login` | Login User |
+| GET | `/api/profile` | Get Current User |
+| GET | `/api/listings` | Get All Listings |
+| GET | `/api/my-listings` | Get Host Listings |
+| GET | `/api/listings/{id}` | Get Single Listing |
+| GET | `/api/listings/search` | Search Listings |
+| POST | `/api/listings` | Create Listing |
+| PUT | `/api/listings/{id}` | Update Listing |
+| DELETE | `/api/listings/{id}` | Delete Listing |
+| GET | `/api/dashboard` | Host Dashboard |
+| POST | `/api/ai-planner` | AI Travel Planner |
+
+---
+
+# Database Setup
+
+## 1. Create a MongoDB Atlas Account
+
+Create a free MongoDB Atlas cluster.
+
+## 2. Create a Database
+
+Database Name
+
+```
+staylocal
 ```
 
-### 2. Create a Virtual Environment
+Collections
 
-```bash
-python -m venv venv
+```
+users
+listings
 ```
 
-### 3. Activate the Virtual Environment
+## 3. Obtain the Connection String
 
-**Windows**
+From MongoDB Atlas, copy your connection string.
 
-```bash
-venv\Scripts\activate
+Example:
+
+```text
+mongodb+srv://<username>:<password>@cluster.mongodb.net/
 ```
 
-**Mac/Linux**
+## 4. Configure Environment Variables
 
-```bash
-source venv/bin/activate
+Create a `.env` file in the backend directory.
+
+Example:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET_KEY=your_secret_key
 ```
 
-### 4. Install Dependencies
+## 5. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Create Environment Variables
-
-Create a `.env` file using `.env.example` as reference.
-
-### 6. Run the Backend Server
+## 6. Start the Backend
 
 ```bash
-uvicorn main:app --reload --port 5000
+uvicorn test_app:app --reload
 ```
 
-### 7. Access the API
+The API will run at
 
-API Base URL:
-
-```text
-http://127.0.0.1:5000
 ```
-
-Swagger Documentation:
-
-```text
-http://127.0.0.1:5000/docs
-```
-
-ReDoc Documentation:
-
-```text
-http://127.0.0.1:5000/redoc
+http://127.0.0.1:8000
 ```
 
 ---
 
-## Project Structure
+# Running the Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs at
+
+```
+http://localhost:5173
+```
+
+---
+
+# Project Structure
 
 ```text
-Backend/
-├── main.py
-├── requirements.txt
-├── .env.example
+StayLocal/
+│
+├── backend/
+│   ├── auth.py
+│   ├── security.py
+│   ├── database.py
+│   ├── models.py
+│   ├── test_app.py
+│   ├── uploads/
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   └── App.jsx
+│
 └── README.md
 ```
+
+---
+
+# Future Enhancements
+
+- Booking System
+- Wishlist
+- Payment Gateway Integration
+- Review & Rating System
+- AI-based Personalized Recommendations
+- Host Verification
+- Interactive Maps
+- Notifications
