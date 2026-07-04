@@ -36,7 +36,6 @@ StayLocal uses **MongoDB Atlas**, a cloud-based NoSQL database.
 
 # Database Schema
 
-> Replace the image path below with your exported schema diagram.
 
 ![StayLocal Database Schema]
 <img width="719" height="538" alt="Screenshot 2026-07-04 192442" src="https://github.com/user-attachments/assets/50af37c4-0cb4-47a5-801b-bdf7681ce426" />
