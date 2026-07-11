@@ -17,7 +17,7 @@ db = client[DATABASE_NAME]
 
 # Collections
 listings_collection = db["listings"]
-
+users_collection = db["users"]
 
 try:
     client.admin.command("ping")

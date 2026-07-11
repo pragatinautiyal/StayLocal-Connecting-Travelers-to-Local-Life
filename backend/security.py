@@ -11,16 +11,17 @@ from database import users_collection
 load_dotenv()
 
 # Secret key from .env
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("JWT_SECRET")
 
 # JWT configuration
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 # Password hashing
 pwd_context = CryptContext(
     schemes=["bcrypt"],
-    deprecated="auto"
+    deprecated="auto",
+    bcrypt__rounds=12
 )
 
 
@@ -57,7 +58,7 @@ security = HTTPBearer()
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
-    print(credentials)
+    
     token = credentials.credentials
 
     try:
@@ -67,7 +68,7 @@ def get_current_user(
             SECRET_KEY,
             algorithms=[ALGORITHM]
         )
-        print("Decoded payload:", payload)
+        
         email = payload.get("email")
 
         if email is None:
@@ -83,7 +84,7 @@ def get_current_user(
             "password": 0
         }
         )
-        print("User from DB:", user)
+        
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

@@ -1,7 +1,9 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class Listing(BaseModel):
     id: int
+    hostId: str
     title: str
     description: str
     location: str
@@ -24,3 +26,15 @@ class Recommendation(BaseModel):
     price: int
     score: int
     image: str
+
+class User(BaseModel):
+    fullName: str
+    email: str
+    password: str
+    role: str
+
+    phone: Optional[str] = None
+    profileImage: Optional[str] = None
+
+    isVerified: bool = False
+    verificationStatus: str = "none"
