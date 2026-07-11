@@ -9,7 +9,13 @@ export default function Dashboard() {
   const [toast, setToast] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/dashboard")
+    const token = localStorage.getItem("token");
+
+    fetch("http://127.0.0.1:8000/api/dashboard", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to load dashboard");
@@ -21,7 +27,6 @@ export default function Dashboard() {
       })
       .catch((error) => {
         console.error(error);
-
         setToast("Failed to load dashboard data");
 
         setTimeout(() => {

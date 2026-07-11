@@ -1,31 +1,109 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 import { ThemeProvider } from "./context/ThemeProvider";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import ComponentsDemo from "./pages/ComponentsDemo";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+import GoogleRegister from "./pages/GoogleRegister";
 import Settings from "./pages/Settings";
 import AiScreen from "./pages/AiScreen";
 
+import CreateListing from "./pages/CreateListing";
+import EditListing from "./pages/EditListing";
+import MyListings from "./pages/MyListings";
+
 function App() {
   return (
-    <ThemeProvider>
-      <div className="w-full min-h-screen overflow-x-hidden bg-white dark:bg-slate-900 transition-colors duration-300">
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/ai" element={<AiScreen />} />
-            <Route path="/components" element={<ComponentsDemo />} />
-          </Routes>
-        </BrowserRouter>
-      </div>
-    </ThemeProvider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <ThemeProvider>
+        <AuthProvider>
+          <div className="w-full min-h-screen overflow-x-hidden bg-white dark:bg-slate-900 transition-colors duration-300">
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Home />} />
+
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+
+                <Route path="/google-register" element={<GoogleRegister />} />
+
+                <Route
+                  path="/explore"
+                  element={
+                    <ProtectedRoute allowedRoles={["traveller"]}>
+                      <Explore />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute allowedRoles={["host"]}>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute allowedRoles={["traveller", "host"]}>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/ai"
+                  element={
+                    <ProtectedRoute allowedRoles={["traveller"]}>
+                      <AiScreen />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route path="/components" element={<ComponentsDemo />} />
+
+                <Route
+                  path="/create-listing"
+                  element={
+                    <ProtectedRoute allowedRoles={["host"]}>
+                      <CreateListing />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/edit-listing/:id"
+                  element={
+                    <ProtectedRoute allowedRoles={["host"]}>
+                      <EditListing />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/my-listings"
+                  element={
+                    <ProtectedRoute allowedRoles={["host"]}>
+                      <MyListings />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </BrowserRouter>
+          </div>
+        </AuthProvider>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   );
 }
 

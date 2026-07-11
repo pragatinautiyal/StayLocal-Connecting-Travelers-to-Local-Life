@@ -1,3 +1,4 @@
+import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/useTheme";
@@ -5,17 +6,39 @@ import { useTheme } from "../context/useTheme";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { user, isAuthenticated, logout } = useAuth();
 
-  const leftItems = [
-    { name: "Home", path: "/" },
-    { name: "Explore", path: "/explore" },
-    { name: "Dashboard", path: "/dashboard" },
-  ];
+  let leftItems = [];
+  let rightItems = [];
 
-  const rightItems = [
-    { name: "Settings", path: "/settings" },
-    { name: "Login", path: "/login" },
-  ];
+  if (!isAuthenticated) {
+    leftItems = [
+      { name: "Home", path: "/" },
+      { name: "Explore", path: "/explore" },
+    ];
+
+    rightItems = [
+      { name: "Login", path: "/login" },
+      { name: "Register", path: "/register" },
+    ];
+  } else if (user.role === "traveller") {
+    leftItems = [
+      { name: "Home", path: "/" },
+      { name: "Explore", path: "/explore" },
+      { name: "Wishlist", path: "/wishlist" },
+      { name: "My Trips", path: "/trips" },
+    ];
+
+    rightItems = [{ name: "Settings", path: "/settings" }];
+  } else if (user.role === "host") {
+    leftItems = [
+      { name: "Home", path: "/" },
+      { name: "Dashboard", path: "/dashboard" },
+      { name: "My Listings", path: "/my-listings" },
+    ];
+
+    rightItems = [{ name: "Settings", path: "/settings" }];
+  }
 
   return (
     <nav className="bg-white dark:bg-slate-800 shadow-md transition-colors duration-300">
@@ -45,16 +68,18 @@ export default function Navbar() {
           <div className="h-6 w-px bg-gray-300 dark:bg-slate-600 mx-2"></div>
 
           {/* AI Planner */}
-          <Link
-            to="/ai"
-            className="relative px-5 py-2 rounded-lg font-medium text-white
-            bg-gradient-to-r from-green-500 via-emerald-500 to-green-600
-            shadow-lg shadow-green-500/30
-            hover:shadow-green-500/50 hover:scale-105
-            transition-all duration-300"
-          >
-            ✨ AI Planner
-          </Link>
+          {(!isAuthenticated || user.role === "traveller") && (
+            <Link
+              to="/ai"
+              className="relative px-5 py-2 rounded-lg font-medium text-white
+    bg-gradient-to-r from-green-500 via-emerald-500 to-green-600
+    shadow-lg shadow-green-500/30
+    hover:shadow-green-500/50 hover:scale-105
+    transition-all duration-300"
+            >
+              ✨ AI Planner
+            </Link>
+          )}
 
           {/* Right links */}
           {rightItems.map((item) => (
@@ -80,9 +105,24 @@ export default function Navbar() {
           </button>
 
           {/* Profile */}
-          <div className="text-2xl cursor-pointer hover:scale-110 transition text-gray-700 dark:text-slate-100">
-            👤
-          </div>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <span className="font-medium text-gray-700 dark:text-slate-100">
+                {user.fullName}
+              </span>
+
+              <button
+                onClick={logout}
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition"
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="text-2xl cursor-pointer hover:scale-110 transition text-gray-700 dark:text-slate-100">
+              👤
+            </div>
+          )}
         </div>
 
         {/* Mobile button */}
