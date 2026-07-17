@@ -6,13 +6,19 @@ import { Input, Toast } from "./ui";
 export default function ListingForm({ listingId }) {
   const navigate = useNavigate();
 
-  const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [location, setLocation] = useState("");
-  const [price, setPrice] = useState("");
+
   const [category, setCategory] = useState("");
-  const [season, setSeason] = useState("");
+  const [listingType, setListingType] = useState("");
+
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [address, setAddress] = useState("");
+
+  const [price, setPrice] = useState("");
+  const [priceUnit, setPriceUnit] = useState("");
+
   const [image, setImage] = useState(null);
 
   const [loading, setLoading] = useState(false);
@@ -25,13 +31,18 @@ export default function ListingForm({ listingId }) {
       try {
         const listing = await getListing(listingId);
 
-        setId(listing.id);
         setTitle(listing.title);
         setDescription(listing.description);
-        setLocation(listing.location);
-        setPrice(listing.price);
+
         setCategory(listing.category);
-        setSeason(listing.season);
+        setListingType(listing.listingType);
+
+        setCity(listing.city);
+        setState(listing.state);
+        setAddress(listing.address);
+
+        setPrice(listing.price);
+        setPriceUnit(listing.priceUnit);
       } catch (err) {
         setToast(err.message);
       }
@@ -39,32 +50,20 @@ export default function ListingForm({ listingId }) {
 
     loadListing();
   }, [listingId]);
+
   async function handleSubmit(e) {
     e.preventDefault();
 
-    console.log("🚀 Submit triggered");
-
-    // Better debugging
-    const fields = {
-      id,
-      title,
-      description,
-      location,
-      price,
-      category,
-      season,
-      image,
-    };
-    console.log("📦 Form data:", fields);
-
     if (
-      !id ||
       !title ||
       !description ||
-      !location ||
-      !price ||
       !category ||
-      !season ||
+      !listingType ||
+      !city ||
+      !state ||
+      !address ||
+      !price ||
+      !priceUnit ||
       (!listingId && !image)
     ) {
       setToast("Please fill all required fields.");
@@ -76,26 +75,29 @@ export default function ListingForm({ listingId }) {
       setToast("");
 
       const formData = new FormData();
-      formData.append("id", id);
+
       formData.append("title", title);
       formData.append("description", description);
-      formData.append("location", location);
-      formData.append("price", Number(price)); // important fix
+
       formData.append("category", category);
-      formData.append("season", season);
+      formData.append("listingType", listingType);
+
+      formData.append("city", city);
+      formData.append("state", state);
+      formData.append("address", address);
+
+      formData.append("price", Number(price));
+      formData.append("priceUnit", priceUnit);
+
       if (image) {
         formData.append("image", image);
       }
-
-      console.log("📤 Sending request...");
 
       if (listingId) {
         await updateListing(listingId, formData);
       } else {
         await createListing(formData);
       }
-
-      console.log("✅ Listing created");
 
       setToast(
         listingId
@@ -107,7 +109,6 @@ export default function ListingForm({ listingId }) {
         navigate("/my-listings");
       }, 1200);
     } catch (err) {
-      console.error("🔥 API Error:", err);
       setToast(err?.response?.data?.detail || err.message);
     } finally {
       setLoading(false);
@@ -121,35 +122,17 @@ export default function ListingForm({ listingId }) {
         className="space-y-5 bg-white dark:bg-slate-800 p-8 rounded-xl shadow"
       >
         <Input
-          placeholder="Listing ID"
-          value={id}
-          disabled={!!listingId}
-          onChange={(e) => setId(e.target.value)}
-        />
-        <Input
-          placeholder="Title"
+          placeholder="Listing Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
         <textarea
-          placeholder="Description"
           rows={4}
+          placeholder="Description"
           className="w-full border rounded-lg p-3 dark:bg-slate-700 dark:text-white"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-        />
-
-        <Input
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-        />
-        <Input
-          type="number"
-          placeholder="Price per night"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
         />
 
         <select
@@ -158,24 +141,58 @@ export default function ListingForm({ listingId }) {
           className="w-full border p-3 rounded-lg"
         >
           <option value="">Select Category</option>
-          <option value="Adventure">Adventure</option>
-          <option value="Nature">Nature</option>
-          <option value="Cultural">Cultural</option>
-          <option value="Luxury">Luxury</option>
-          <option value="Budget">Budget</option>
+          <option value="Stay">Stay</option>
+          <option value="Food & Drink">Food & Drink</option>
+          <option value="Experience">Experience</option>
+          <option value="Workshop">Workshop</option>
+          <option value="Shopping">Shopping</option>
+          <option value="Event">Event</option>
+          <option value="Wellness">Wellness</option>
         </select>
 
+        <Input
+          placeholder="Listing Type (e.g. Homestay, Cafe, Pottery Workshop)"
+          value={listingType}
+          onChange={(e) => setListingType(e.target.value)}
+        />
+
+        <Input
+          placeholder="City"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        />
+
+        <Input
+          placeholder="State"
+          value={state}
+          onChange={(e) => setState(e.target.value)}
+        />
+
+        <Input
+          placeholder="Full Address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+
+        <Input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+        />
+
         <select
-          value={season}
-          onChange={(e) => setSeason(e.target.value)}
+          value={priceUnit}
+          onChange={(e) => setPriceUnit(e.target.value)}
           className="w-full border p-3 rounded-lg"
         >
-          <option value="">Select Season</option>
-          <option value="Summer">Summer</option>
-          <option value="Winter">Winter</option>
-          <option value="Monsoon">Monsoon</option>
-          <option value="Spring">Spring</option>
-          <option value="Autumn">Autumn</option>
+          <option value="">Select Price Unit</option>
+          <option value="Per Night">Per Night</option>
+          <option value="Per Person">Per Person</option>
+          <option value="Per Ticket">Per Ticket</option>
+          <option value="Average Spend">Average Spend</option>
+          <option value="Starting From">Starting From</option>
+          <option value="Free">Free</option>
         </select>
 
         <input

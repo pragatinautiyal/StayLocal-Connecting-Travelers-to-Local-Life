@@ -1,16 +1,33 @@
 from pydantic import BaseModel
 from typing import Optional
+from typing import List
+from datetime import datetime
 
 class Listing(BaseModel):
     id: int
+
+    # Owner
     hostId: str
+
+    # Basic Information
     title: str
     description: str
-    location: str
+
+    # Classification
+    category: str          # Stay, Food & Drink, Experience, Workshop, Shopping, Event, Wellness
+    listingType: str       # Homestay, Cafe, Pottery Workshop, Trek, Restaurant, etc.
+
+    # Location
+    city: str
+    state: str
+    address: str
+
+    # Pricing
     price: int
-    category: str
-    season: str
-    image: str
+    priceUnit: str         # Per Night, Per Person, Per Ticket, Average Spend, Starting From
+
+    # Media
+    images: List[str]
 
 
 class PlannerRequest(BaseModel):
@@ -38,3 +55,9 @@ class User(BaseModel):
 
     isVerified: bool = False
     verificationStatus: str = "none"
+
+
+class Wishlist(BaseModel):
+    userId: str
+    listingId: int
+    createdAt: datetime = datetime.utcnow()

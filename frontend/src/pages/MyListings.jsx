@@ -37,7 +37,9 @@ export default function MyListings() {
     }
   }
 
-  if (loading) return <h2 className="text-center mt-10">Loading...</h2>;
+  if (loading) {
+    return <h2 className="text-center mt-10">Loading...</h2>;
+  }
 
   return (
     <>
@@ -60,17 +62,28 @@ export default function MyListings() {
             {listings.map((listing) => (
               <div key={listing.id} className="border rounded-xl p-4 shadow">
                 <img
-                  src={listing.image}
+                  src={listing.images?.[0]}
+                  alt={listing.title}
                   className="h-52 w-full object-cover rounded"
                 />
 
-                <h2 className="font-bold mt-4">{listing.title}</h2>
+                <h2 className="font-bold text-xl mt-4">{listing.title}</h2>
 
-                <p>{listing.location}</p>
+                <p className="text-gray-500">{listing.listingType}</p>
 
-                <p>₹{listing.price}</p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {listing.city}, {listing.state}
+                </p>
 
-                <div className="flex gap-3 mt-4">
+                <p className="font-semibold mt-2">
+                  ₹{listing.price} / {listing.priceUnit}
+                </p>
+
+                <p className="text-sm text-gray-500 mt-1">
+                  Category: {listing.category}
+                </p>
+
+                <div className="flex gap-3 mt-5">
                   <Button
                     label="Edit"
                     onClick={() => navigate(`/edit-listing/${listing.id}`)}

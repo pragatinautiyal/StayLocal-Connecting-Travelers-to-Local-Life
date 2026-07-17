@@ -3,6 +3,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import { ThemeProvider } from "./context/ThemeProvider";
 import { AuthProvider } from "./context/AuthContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Home from "./pages/Home";
@@ -18,89 +19,111 @@ import AiScreen from "./pages/AiScreen";
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
 import MyListings from "./pages/MyListings";
+import ListingDetails from "./pages/ListingDetails";
+import Wishlist from "./pages/Wishlist";
 
 function App() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <ThemeProvider>
         <AuthProvider>
-          <div className="w-full min-h-screen overflow-x-hidden bg-white dark:bg-slate-900 transition-colors duration-300">
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Home />} />
+          <WishlistProvider>
+            <div className="w-full min-h-screen overflow-x-hidden bg-white dark:bg-slate-900 transition-colors duration-300">
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Home />} />
 
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
 
-                <Route path="/google-register" element={<GoogleRegister />} />
+                  <Route path="/google-register" element={<GoogleRegister />} />
 
-                <Route
-                  path="/explore"
-                  element={
-                    <ProtectedRoute allowedRoles={["traveller"]}>
-                      <Explore />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/explore"
+                    element={
+                      <ProtectedRoute allowedRoles={["traveller"]}>
+                        <Explore />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute allowedRoles={["host"]}>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <ProtectedRoute allowedRoles={["host"]}>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute allowedRoles={["traveller", "host"]}>
-                      <Settings />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/settings"
+                    element={
+                      <ProtectedRoute allowedRoles={["traveller", "host"]}>
+                        <Settings />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="/ai"
-                  element={
-                    <ProtectedRoute allowedRoles={["traveller"]}>
-                      <AiScreen />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/ai"
+                    element={
+                      <ProtectedRoute allowedRoles={["traveller"]}>
+                        <AiScreen />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route path="/components" element={<ComponentsDemo />} />
+                  <Route path="/components" element={<ComponentsDemo />} />
 
-                <Route
-                  path="/create-listing"
-                  element={
-                    <ProtectedRoute allowedRoles={["host"]}>
-                      <CreateListing />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/create-listing"
+                    element={
+                      <ProtectedRoute allowedRoles={["host"]}>
+                        <CreateListing />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="/edit-listing/:id"
-                  element={
-                    <ProtectedRoute allowedRoles={["host"]}>
-                      <EditListing />
-                    </ProtectedRoute>
-                  }
-                />
+                  <Route
+                    path="/edit-listing/:id"
+                    element={
+                      <ProtectedRoute allowedRoles={["host"]}>
+                        <EditListing />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="/my-listings"
-                  element={
-                    <ProtectedRoute allowedRoles={["host"]}>
-                      <MyListings />
-                    </ProtectedRoute>
-                  }
-                />
-              </Routes>
-            </BrowserRouter>
-          </div>
+                  <Route
+                    path="/my-listings"
+                    element={
+                      <ProtectedRoute allowedRoles={["host"]}>
+                        <MyListings />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/listing/:id"
+                    element={
+                      <ProtectedRoute allowedRoles={["traveller"]}>
+                        <ListingDetails />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/wishlist"
+                    element={
+                      <ProtectedRoute allowedRoles={["traveller"]}>
+                        <Wishlist />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </BrowserRouter>
+            </div>
+          </WishlistProvider>
         </AuthProvider>
       </ThemeProvider>
     </GoogleOAuthProvider>

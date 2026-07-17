@@ -26,7 +26,6 @@ export default function Navbar() {
       { name: "Home", path: "/" },
       { name: "Explore", path: "/explore" },
       { name: "Wishlist", path: "/wishlist" },
-      { name: "My Trips", path: "/trips" },
     ];
 
     rightItems = [{ name: "Settings", path: "/settings" }];

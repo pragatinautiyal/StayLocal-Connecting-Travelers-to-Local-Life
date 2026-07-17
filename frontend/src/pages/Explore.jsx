@@ -47,12 +47,13 @@ export default function Explore() {
       <main className="flex-1 w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-slate-100 text-center">
-            Explore Homestays
+            Explore Local Experiences
           </h1>
 
-          <p className="mt-3 text-gray-600 dark:text-slate-400 text-center max-w-2xl mx-auto">
-            Discover eco-friendly stays, village homes, and nature retreats
-            across India based on your budget and travel style.
+          <p className="mt-3 text-gray-600 dark:text-slate-400 text-center max-w-3xl mx-auto">
+            Discover authentic homestays, cafés, workshops, local businesses,
+            cultural experiences, shopping spots, and hidden gems shared by
+            local hosts across India.
           </p>
 
           {loading ? (
@@ -68,10 +69,16 @@ export default function Explore() {
               {listings.map((listing) => (
                 <Card
                   key={listing.id}
+                  id={listing.id}
                   title={listing.title}
                   description={listing.description}
-                  image={listing.image}
+                  image={listing.images?.[0]}
                   price={listing.price}
+                  priceUnit={listing.priceUnit}
+                  category={listing.category}
+                  listingType={listing.listingType}
+                  city={listing.city}
+                  state={listing.state}
                 />
               ))}
             </div>
