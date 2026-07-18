@@ -56,8 +56,13 @@ class User(BaseModel):
     isVerified: bool = False
     verificationStatus: str = "none"
 
-
 class Wishlist(BaseModel):
     userId: str
     listingId: int
     createdAt: datetime = datetime.utcnow()
+
+class AIPlannerRequest(BaseModel):
+    destination: str
+    budget: int
+    days: int
+    travel_type: str

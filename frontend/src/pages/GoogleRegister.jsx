@@ -55,7 +55,7 @@ export default function GoogleRegister() {
       if (data.user.role === "host") {
         navigate("/dashboard");
       } else {
-        navigate("/explore");
+        navigate("/");
       }
     } catch (err) {
       setToast(err.message);

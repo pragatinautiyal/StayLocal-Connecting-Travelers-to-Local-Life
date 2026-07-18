@@ -119,92 +119,170 @@ export default function ListingForm({ listingId }) {
     <>
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 bg-white dark:bg-slate-800 p-8 rounded-xl shadow"
+        className="space-y-6 bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700"
       >
-        <Input
-          placeholder="Listing Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        {/* Title */}
+        <div>
+          <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+            Listing Title
+          </label>
 
-        <textarea
-          rows={4}
-          placeholder="Description"
-          className="w-full border rounded-lg p-3 dark:bg-slate-700 dark:text-white"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+          <Input
+            placeholder="e.g. Little Buddha Café"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
 
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="w-full border p-3 rounded-lg"
-        >
-          <option value="">Select Category</option>
-          <option value="Stay">Stay</option>
-          <option value="Food & Drink">Food & Drink</option>
-          <option value="Experience">Experience</option>
-          <option value="Workshop">Workshop</option>
-          <option value="Shopping">Shopping</option>
-          <option value="Event">Event</option>
-          <option value="Wellness">Wellness</option>
-        </select>
+        {/* Description */}
+        <div>
+          <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+            Description
+          </label>
 
-        <Input
-          placeholder="Listing Type (e.g. Homestay, Cafe, Pottery Workshop)"
-          value={listingType}
-          onChange={(e) => setListingType(e.target.value)}
-        />
+          <textarea
+            rows={5}
+            placeholder="Describe your listing..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 dark:border-slate-600 p-3 dark:bg-slate-700 dark:text-white"
+          />
+        </div>
 
-        <Input
-          placeholder="City"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        />
+        {/* Category */}
+        <div>
+          <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+            Category
+          </label>
 
-        <Input
-          placeholder="State"
-          value={state}
-          onChange={(e) => setState(e.target.value)}
-        />
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 dark:border-slate-600 p-3 dark:bg-slate-700 dark:text-white"
+          >
+            <option value="">Select Category</option>
+            <option value="Stay">Stay</option>
+            <option value="Cafe">Cafe</option>
+            <option value="Rental">Rental</option>
+            <option value="Workshop">Workshop</option>
+            <option value="Experience">Experience</option>
+            <option value="Food & Drink">Food & Drink</option>
+          </select>
+        </div>
 
-        <Input
-          placeholder="Full Address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
+        {/* Listing Type */}
+        <div>
+          <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+            Listing Type
+          </label>
 
-        <Input
-          type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
+          <select
+            value={listingType}
+            onChange={(e) => setListingType(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 dark:border-slate-600 p-3 dark:bg-slate-700 dark:text-white"
+          >
+            <option value="">Select Listing Type</option>
+            <option value="Homestay">Homestay</option>
+            <option value="Service">Service</option>
+          </select>
+        </div>
 
-        <select
-          value={priceUnit}
-          onChange={(e) => setPriceUnit(e.target.value)}
-          className="w-full border p-3 rounded-lg"
-        >
-          <option value="">Select Price Unit</option>
-          <option value="Per Night">Per Night</option>
-          <option value="Per Person">Per Person</option>
-          <option value="Per Ticket">Per Ticket</option>
-          <option value="Average Spend">Average Spend</option>
-          <option value="Starting From">Starting From</option>
-          <option value="Free">Free</option>
-        </select>
+        {/* Location */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+              City
+            </label>
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
-        />
+            <Input
+              placeholder="City"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+            />
+          </div>
 
+          <div>
+            <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+              State
+            </label>
+
+            <Input
+              placeholder="State"
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Address */}
+        <div>
+          <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+            Full Address
+          </label>
+
+          <Input
+            placeholder="Complete address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+
+        {/* Price */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+              Price (₹)
+            </label>
+
+            <Input
+              type="number"
+              placeholder="Enter price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+              Price Unit
+            </label>
+
+            <select
+              value={priceUnit}
+              onChange={(e) => setPriceUnit(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 dark:border-slate-600 p-3 dark:bg-slate-700 dark:text-white"
+            >
+              <option value="">Select Price Unit</option>
+              <option value="Per Night">Per Night</option>
+              <option value="Per Day">Per Day</option>
+              <option value="Per Hour">Per Hour</option>
+              <option value="Per Person">Per Person</option>
+              <option value="Per Ticket">Per Ticket</option>
+              <option value="Fixed Price">Fixed Price</option>
+              <option value="Free">Free</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Image */}
+        <div>
+          <label className="block mb-2 font-medium text-gray-700 dark:text-white">
+            Listing Image
+          </label>
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
+            className="w-full rounded-lg border border-gray-300 dark:border-slate-600 p-3 bg-white dark:bg-slate-700 dark:text-white"
+          />
+        </div>
+
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg disabled:opacity-50"
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition disabled:opacity-50"
         >
           {loading
             ? listingId

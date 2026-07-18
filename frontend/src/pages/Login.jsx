@@ -45,7 +45,7 @@ export default function Login() {
         if (data.user.role === "host") {
           navigate("/dashboard");
         } else {
-          navigate("/explore");
+          navigate("/");
         }
       }, 1000);
     } catch (error) {
@@ -81,7 +81,7 @@ export default function Login() {
         if (data.user.role === "host") {
           navigate("/dashboard");
         } else {
-          navigate("/explore");
+          navigate("/");
         }
 
         return;

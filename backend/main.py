@@ -11,6 +11,12 @@ from fastapi.staticfiles import StaticFiles
 from models import Listing, PlannerRequest, Recommendation, Wishlist
 from auth import router as auth_router
 from security import get_current_user, require_host
+from services.ai_service import (
+    generate_itinerary,
+    get_listings_by_city,
+    build_prompt
+)
+from models import AIPlannerRequest
 
 import os
 import shutil
@@ -70,7 +76,6 @@ def get_profile(current_user: dict = Depends(get_current_user)):
 
 @app.get("/api/listings")
 def get_listings():
-    time.sleep(2)
     all_listings = list(listings_collection.find({}, {"_id": 0}))
 
     return all_listings
@@ -92,17 +97,46 @@ def get_my_listings(
         "listings": listings
     }
 
+from typing import Optional
+
 @app.get("/api/listings/search")
-def search_listings(location: str):
+def search_listings(
+    city: Optional[str] = None,
+    category: Optional[str] = None,
+    listingType: Optional[str] = None,
+    minPrice: Optional[int] = None,
+    maxPrice: Optional[int] = None
+):
+    query = {}
+
+    # Search by city
+    if city:
+        query["city"] = {
+            "$regex": city,
+            "$options": "i"
+        }
+
+    # Filter by category
+    if category:
+        query["category"] = category
+
+    # Filter by listing type
+    if listingType:
+        query["listingType"] = listingType
+
+    # Filter by price
+    if minPrice is not None or maxPrice is not None:
+        query["price"] = {}
+
+        if minPrice is not None:
+            query["price"]["$gte"] = minPrice
+
+        if maxPrice is not None:
+            query["price"]["$lte"] = maxPrice
 
     result = list(
         listings_collection.find(
-            {
-                "city": {
-                    "$regex": location,
-                    "$options": "i"
-                }
-            },
+            query,
             {"_id": 0}
         )
     )
@@ -110,7 +144,7 @@ def search_listings(location: str):
     if not result:
         raise HTTPException(
             status_code=404,
-            detail="No listings found in this city"
+            detail="No listings found"
         )
 
     return result
@@ -372,12 +406,12 @@ def get_dashboard(
         "recentListings": all_listings[-3:]
     }
 
+'''
 @app.post(
     "/api/ai-planner",
     status_code=status.HTTP_200_OK
 )
 def ai_planner(request: PlannerRequest):
-    time.sleep(2)
 
     all_listings = list(
         listings_collection.find({}, {"_id": 0})
@@ -417,7 +451,31 @@ def ai_planner(request: PlannerRequest):
         "success": True,
         "count": len(recommendations[:3]),
         "recommendations": recommendations[:3]
-    }
+    }'''
+@app.post("/api/ai-planner")
+def ai_planner(request: AIPlannerRequest):
+    # Fetch actual local listings for the target city from the database
+    listings = get_listings_by_city(request.destination) #[cite: 1]
+    prompt = build_prompt(request, listings) #[cite: 1]
+
+    try:
+        itinerary = generate_itinerary(prompt) #[cite: 1]
+
+        # Return BOTH the itinerary text and your clean DB objects to the frontend
+        return {
+            "success": True,
+            "data": {
+                "itinerary": itinerary,
+                "recommendedListings": listings  # Send matching listings over!
+            }
+        }
+
+    except Exception:
+        return {
+            "success": False,
+            "message": "AI service is temporarily unavailable. Please try again later."
+        }
+
 
 @app.post("/api/wishlist/{listing_id}")
 def add_to_wishlist(
