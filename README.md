@@ -55,7 +55,7 @@ StayLocal uses **MongoDB Atlas**, a cloud-based NoSQL database.
 
 
 ![StayLocal Database Schema]
-<img width="719" height="538" alt="Screenshot 2026-07-04 192442" src="https://github.com/user-attachments/assets/50af37c4-0cb4-47a5-801b-bdf7681ce426" />
+<img width="1241" height="536" alt="Untitled(1)" src="https://github.com/user-attachments/assets/d40c9a50-304a-4d36-abec-605030869a13" />
 
 
 
