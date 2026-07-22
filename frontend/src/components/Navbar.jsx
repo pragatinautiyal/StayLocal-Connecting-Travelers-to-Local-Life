@@ -31,7 +31,7 @@ export default function Navbar() {
     rightItems = [{ name: "Settings", path: "/settings" }];
   } else if (user.role === "host") {
     leftItems = [
-      { name: "Home", path: "/" },
+      { name: "Home", path: "/HostHome" },
       { name: "Dashboard", path: "/dashboard" },
       { name: "My Listings", path: "/my-listings" },
     ];
@@ -44,7 +44,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         {/* Logo */}
         <Link
-          to="/"
+          to={
+            isAuthenticated ? (user.role === "host" ? "/host-home" : "/") : "/"
+          }
           className="text-xl font-bold text-green-600 hover:scale-105 transition"
         >
           StayLocal

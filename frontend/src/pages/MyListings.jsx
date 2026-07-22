@@ -60,22 +60,29 @@ export default function MyListings() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map((listing) => (
-              <div key={listing.id} className="border rounded-xl p-4 shadow">
+              <div
+                key={listing.id}
+                className="overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-4"
+              >
                 <img
                   src={listing.images?.[0]}
                   alt={listing.title}
-                  className="h-52 w-full object-cover rounded"
+                  className="h-52 w-full object-cover rounded-xl"
                 />
 
-                <h2 className="font-bold text-xl mt-4">{listing.title}</h2>
+                <h2 className="font-bold text-xl text-gray-800 mt-4">
+                  {listing.title}
+                </h2>
 
-                <p className="text-gray-500">{listing.listingType}</p>
-
-                <p className="text-sm text-gray-600 mt-1">
-                  {listing.city}, {listing.state}
+                <p className="text-gray-500 text-sm mt-1">
+                  {listing.listingType}
                 </p>
 
-                <p className="font-semibold mt-2">
+                <p className="text-sm text-gray-600 mt-1">
+                  📍 {listing.city}, {listing.state}
+                </p>
+
+                <p className="font-bold text-lg text-green-600 mt-2">
                   ₹{listing.price} / {listing.priceUnit}
                 </p>
 
