@@ -8,16 +8,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from models import Listing, PlannerRequest, Recommendation, Wishlist
+from models import Listing, Wishlist
 from auth import router as auth_router
-from security import get_current_user, require_host
+from security import get_current_user, require_host, verify_password,hash_password
 from services.ai_service import (
     generate_itinerary,
     get_listings_by_city,
     build_prompt
 )
 from models import AIPlannerRequest
-
+from models import ChangePasswordRequest
 import os
 import shutil
 
@@ -601,6 +601,45 @@ def get_wishlist(
         )
     )
     return listings
+
+@app.put("/api/change-password")
+async def change_password(
+    data: ChangePasswordRequest,
+    current_user: dict = Depends(get_current_user),
+):
+    user = users_collection.find_one(
+        {"email": current_user["email"]}
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    if not verify_password(
+        data.currentPassword,
+        user["password"]
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="Current password is incorrect"
+        )
+
+    hashed_password = hash_password(data.newPassword)
+
+    users_collection.update_one(
+        {"_id": user["_id"]},
+        {
+            "$set": {
+                "password": hashed_password
+            }
+        }
+    )
+
+    return {
+        "message": "Password changed successfully"
+    }
 
 @app.exception_handler(Exception)
 async def global_exception_handler(

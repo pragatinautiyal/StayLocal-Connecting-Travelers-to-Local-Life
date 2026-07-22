@@ -29,21 +29,6 @@ class Listing(BaseModel):
     # Media
     images: List[str]
 
-
-class PlannerRequest(BaseModel):
-    budget: int
-    season: str
-    travel_type: str
-
-
-class Recommendation(BaseModel):
-    title: str
-    location: str
-    description: str
-    price: int
-    score: int
-    image: str
-
 class User(BaseModel):
     fullName: str
     email: str
@@ -66,3 +51,7 @@ class AIPlannerRequest(BaseModel):
     budget: int
     days: int
     travel_type: str
+
+class ChangePasswordRequest(BaseModel):
+    currentPassword: str
+    newPassword: str

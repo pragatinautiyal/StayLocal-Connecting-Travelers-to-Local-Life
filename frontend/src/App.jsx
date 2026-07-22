@@ -15,6 +15,7 @@ import Register from "./pages/Register";
 import GoogleRegister from "./pages/GoogleRegister";
 import Settings from "./pages/Settings";
 import AiScreen from "./pages/AiScreen";
+import HostHome from "./pages/HostHome";
 
 import CreateListing from "./pages/CreateListing";
 import EditListing from "./pages/EditListing";
@@ -52,6 +53,15 @@ function App() {
                     element={
                       <ProtectedRoute allowedRoles={["host"]}>
                         <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/HostHome"
+                    element={
+                      <ProtectedRoute allowedRoles={["host"]}>
+                        <HostHome />
                       </ProtectedRoute>
                     }
                   />
