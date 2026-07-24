@@ -1,7 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Button } from "../components/ui";
-import { useWishlist } from "../context/WishlistContext";
 
 export default function Card({
   id,
@@ -14,98 +11,76 @@ export default function Card({
   listingType,
   city,
   state,
+  isWishlisted,
+  onWishlistToggle,
 }) {
   const navigate = useNavigate();
-  const { wishlistIds, setWishlistIds } = useWishlist();
-
-  const wishlisted = wishlistIds.includes(id);
-  const [message, setMessage] = useState("");
-
-  const addToWishlist = async () => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/wishlist/${id}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Failed to add wishlist");
-      }
-
-      // Update global wishlist state
-      setWishlistIds([...wishlistIds, id]);
-
-      setMessage("Added to wishlist ❤️");
-
-      setTimeout(() => {
-        setMessage("");
-      }, 2000);
-    } catch (error) {
-      console.error(error);
-
-      setMessage(error.message);
-
-      setTimeout(() => {
-        setMessage("");
-      }, 2000);
-    }
-  };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 hover:-translate-y-1 flex flex-col">
-      {/* Image */}
-      <div className="relative">
-        <img src={image} alt={title} className="h-44 w-full object-cover" />
+    <div
+      onClick={() => navigate(`/listing/${id}`)}
+      className="group cursor-pointer rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col relative"
+    >
+      <div className="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-slate-700">
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
 
-        {/* Wishlist Button */}
+        {/* Heart Wishlist Button */}
         <button
-          onClick={addToWishlist}
-          className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md hover:scale-110 transition"
+          onClick={(e) => {
+            e.stopPropagation(); // Prevents navigating to details page
+            onWishlistToggle(id);
+          }}
+          className="absolute top-3 right-3 p-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md rounded-full shadow hover:scale-110 transition-all"
         >
-          {wishlisted ? "❤️" : "♡"}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            className={`w-5 h-5 transition-colors ${
+              isWishlisted
+                ? "fill-red-500 stroke-red-500"
+                : "fill-transparent stroke-slate-700 dark:stroke-slate-200"
+            }`}
+            strokeWidth="2"
+          >
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+          </svg>
         </button>
       </div>
 
-      {/* Toast */}
-      {message && (
-        <div className="fixed top-5 right-5 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50">
-          {message}
-        </div>
-      )}
-
-      <div className="p-4 flex flex-col flex-1">
-        <span className="inline-block w-fit bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-2">
-          {category}
-        </span>
-
-        <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-
-        <p className="text-sm text-gray-500">{listingType}</p>
-
-        <p className="text-sm text-gray-600 mt-1">
-          📍 {city}, {state}
-        </p>
-
-        <p className="text-gray-600 text-sm mt-3 line-clamp-3">{description}</p>
-
-        <div className="mt-auto pt-5 flex items-center justify-between">
-          <div>
-            <p className="text-lg font-bold text-green-700">₹{price}</p>
-
-            <p className="text-xs text-gray-500">{priceUnit}</p>
+      <div className="p-5 flex-1 flex flex-col justify-between">
+        <div>
+          <div className="flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <span>
+              📍 {city}, {state}
+            </span>
+            <span className="bg-slate-100 dark:bg-slate-700 px-2.5 py-1 rounded-full font-medium text-slate-700 dark:text-slate-300">
+              {category}
+            </span>
           </div>
 
-          <Button
-            label="View Details"
-            variant="secondary"
-            onClick={() => navigate(`/listing/${id}`)}
-          />
+          <h3 className="mt-3 font-bold text-lg text-slate-800 dark:text-white line-clamp-1">
+            {title}
+          </h3>
+
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 line-clamp-2">
+            {description}
+          </p>
+        </div>
+
+        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between">
+          <span className="text-xs text-slate-400 dark:text-slate-500 font-medium uppercase tracking-wide">
+            {listingType}
+          </span>
+          <span className="font-bold text-green-600 dark:text-green-400">
+            ₹{price}{" "}
+            <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+              / {priceUnit}
+            </span>
+          </span>
         </div>
       </div>
     </div>

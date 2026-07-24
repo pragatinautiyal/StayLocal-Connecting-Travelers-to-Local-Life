@@ -9,7 +9,7 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 def generate_itinerary(prompt: str):
     response = client.models.generate_content(
-        model="gemini-3.5-flash",   # or gemini-2.5-flash
+        model="gemini-flash-latest",   # or gemini-2.5-flash
         contents=prompt,
     )
 

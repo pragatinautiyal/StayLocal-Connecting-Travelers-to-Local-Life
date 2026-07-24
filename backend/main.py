@@ -406,52 +406,6 @@ def get_dashboard(
         "recentListings": all_listings[-3:]
     }
 
-'''
-@app.post(
-    "/api/ai-planner",
-    status_code=status.HTTP_200_OK
-)
-def ai_planner(request: PlannerRequest):
-
-    all_listings = list(
-        listings_collection.find({}, {"_id": 0})
-    )
-
-    recommendations = []
-
-    for listing in all_listings:
-
-        score = 0
-
-        if listing["price"] <= request.budget:
-            score += 40
-
-        if listing["season"].lower() == request.season.lower():
-            score += 30
-
-        if listing["category"].lower() == request.travel_type.lower():
-            score += 30
-
-        recommendations.append({
-            "id": listing["id"],
-            "title": listing["title"],
-            "location": listing["location"],
-            "description": listing["description"],
-            "price": listing["price"],
-            "image": listing["image"],
-            "score": score
-        })
-
-    recommendations.sort(
-        key=lambda x: x["score"],
-        reverse=True
-    )
-
-    return {
-        "success": True,
-        "count": len(recommendations[:3]),
-        "recommendations": recommendations[:3]
-    }'''
 @app.post("/api/ai-planner")
 def ai_planner(request: AIPlannerRequest):
     # Fetch actual local listings for the target city from the database
@@ -470,10 +424,12 @@ def ai_planner(request: AIPlannerRequest):
             }
         }
 
-    except Exception:
+    except Exception as e:
+        print("Gemini Error:", e)
+
         return {
             "success": False,
-            "message": "AI service is temporarily unavailable. Please try again later."
+            "message": str(e)
         }
 
 
