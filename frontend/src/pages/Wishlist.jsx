@@ -2,12 +2,27 @@ import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { Loader } from "../components/ui";
 
 export default function Wishlist() {
   const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState("");
+
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => {
+      setToast("");
+    }, 3000);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
     fetch("http://127.0.0.1:8000/api/wishlist", {
       headers: {
@@ -18,7 +33,6 @@ export default function Wishlist() {
         if (!res.ok) {
           throw new Error("Failed to fetch wishlist");
         }
-
         return res.json();
       })
       .then((data) => {
@@ -27,11 +41,57 @@ export default function Wishlist() {
       })
       .catch((err) => {
         console.error(err);
+        showToast("Failed to load wishlist items");
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
+  const handleRemoveFromWishlist = async (listingId) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      showToast("Please log in to manage your wishlist");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://127.0.0.1:8000/api/wishlist/${listingId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        // Optimistically remove item from UI state
+        setListings((prevListings) =>
+          prevListings.filter((item) => item.id !== listingId),
+        );
+        showToast("Removed from wishlist");
+      } else {
+        showToast(data.detail || "Failed to remove item");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to update wishlist");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-green-50 dark:bg-gray-900 transition-colors">
+      {toast && (
+        <div className="fixed top-5 right-5 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm font-medium">
+          {toast}
+        </div>
+      )}
+
       <Navbar />
 
       <main className="flex-1 w-full">
@@ -46,7 +106,11 @@ export default function Wishlist() {
           </p>
 
           {/* Wishlist Content */}
-          {listings.length === 0 ? (
+          {loading ? (
+            <div className="mt-16 flex justify-center">
+              <Loader />
+            </div>
+          ) : listings.length === 0 ? (
             <div className="mt-16 text-center">
               <p className="text-gray-500 dark:text-gray-400 text-lg">
                 No wishlist items yet ❤️
@@ -67,6 +131,8 @@ export default function Wishlist() {
                   listingType={item.listingType}
                   city={item.city}
                   state={item.state}
+                  isWishlisted={true}
+                  onWishlistToggle={handleRemoveFromWishlist}
                 />
               ))}
             </div>

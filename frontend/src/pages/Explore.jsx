@@ -8,6 +8,7 @@ import { Loader } from "../components/ui";
 
 export default function Explore() {
   const [listings, setListings] = useState([]);
+  const [wishlistIds, setWishlistIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState("");
 
@@ -19,63 +20,117 @@ export default function Explore() {
   const listingType = searchParams.get("listingType") || "";
   const budget = searchParams.get("budget") || "";
 
+  // Helper function moved ABOVE useEffect so it's defined before use
+  const showToast = (msg) => {
+    setToast(msg);
+    setTimeout(() => {
+      setToast("");
+    }, 3000);
+  };
+
   useEffect(() => {
-    setLoading(true);
+    const fetchData = async () => {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-    let url = "http://127.0.0.1:8000/api/listings";
+      let url = "http://127.0.0.1:8000/api/listings";
 
-    // If any filter is applied, use search API
-    if (city || category || listingType || budget) {
-      const params = new URLSearchParams();
+      if (city || category || listingType || budget) {
+        const params = new URLSearchParams();
 
-      if (city) params.append("city", city);
-      if (category) params.append("category", category);
-      if (listingType) params.append("listingType", listingType);
+        if (city) params.append("city", city);
+        if (category) params.append("category", category);
+        if (listingType) params.append("listingType", listingType);
 
-      if (budget) {
-        if (budget === "0-1000") {
-          params.append("minPrice", "0");
-          params.append("maxPrice", "1000");
-        } else if (budget === "1000-3000") {
-          params.append("minPrice", "1000");
-          params.append("maxPrice", "3000");
-        } else if (budget === "3000+") {
-          params.append("minPrice", "3000");
+        if (budget) {
+          if (budget === "0-1000") {
+            params.append("minPrice", "0");
+            params.append("maxPrice", "1000");
+          } else if (budget === "1000-3000") {
+            params.append("minPrice", "1000");
+            params.append("maxPrice", "3000");
+          } else if (budget === "3000+") {
+            params.append("minPrice", "3000");
+          }
         }
+
+        url = `http://127.0.0.1:8000/api/listings/search?${params.toString()}`;
       }
 
-      url = `http://127.0.0.1:8000/api/listings/search?${params.toString()}`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to load listings");
+        const data = await res.json();
+        setListings(data);
+
+        if (token) {
+          const wishRes = await fetch(
+            "http://127.0.0.1:8000/api/wishlist/ids",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          if (wishRes.ok) {
+            const ids = await wishRes.json();
+            setWishlistIds(ids);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        showToast("Failed to load listings");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [city, category, listingType, budget]);
+
+  const handleWishlistToggle = async (listingId) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      showToast("Please log in to save listings.");
+      return;
     }
 
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to load listings");
-        }
+    const isSaved = wishlistIds.includes(listingId);
+    const endpoint = `http://127.0.0.1:8000/api/wishlist/${listingId}`;
+    const method = isSaved ? "DELETE" : "POST";
 
-        return response.json();
-      })
-      .then((data) => {
-        setListings(data);
-      })
-      .catch((error) => {
-        console.error(error);
-
-        setToast("Failed to load listings");
-
-        setTimeout(() => {
-          setToast("");
-        }, 3000);
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      const res = await fetch(endpoint, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-  }, [city, category, listingType, budget]);
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        if (isSaved) {
+          setWishlistIds((prev) => prev.filter((id) => id !== listingId));
+          showToast("Removed from wishlist");
+        } else {
+          setWishlistIds((prev) => [...prev, listingId]);
+          showToast("Saved to wishlist");
+        }
+      } else {
+        showToast(data.detail || "Action failed");
+      }
+    } catch (err) {
+      console.error(err);
+      showToast("Failed to update wishlist");
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-slate-900 transition-colors duration-300">
       {toast && (
-        <div className="fixed top-5 right-5 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+        <div className="fixed top-5 right-5 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg z-50 text-sm font-medium">
           {toast}
         </div>
       )}
@@ -182,6 +237,8 @@ export default function Explore() {
                     listingType={listing.listingType}
                     city={listing.city}
                     state={listing.state}
+                    isWishlisted={wishlistIds.includes(listing.id)}
+                    onWishlistToggle={handleWishlistToggle}
                   />
                 ))}
               </div>
