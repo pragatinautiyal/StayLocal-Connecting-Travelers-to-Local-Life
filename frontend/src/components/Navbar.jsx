@@ -163,13 +163,16 @@ export default function Navbar() {
               : "☀️ Switch to Light Mode"}
           </button>
 
-          <Link
-            to="/ai"
-            onClick={() => setOpen(false)}
-            className="block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-center"
-          >
-            ✨ AI Planner
-          </Link>
+          {/* Hidden for host roles */}
+          {(!isAuthenticated || user.role === "traveller") && (
+            <Link
+              to="/ai"
+              onClick={() => setOpen(false)}
+              className="block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-center"
+            >
+              ✨ AI Planner
+            </Link>
+          )}
         </div>
       )}
     </nav>

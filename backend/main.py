@@ -1,5 +1,4 @@
 import os
-import shutil
 import time
 import random
 from datetime import datetime
@@ -8,12 +7,14 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, status, Request, UploadFile, File, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from slowapi import _rate_limit_exceeded_handler
+
+import cloudinary
+import cloudinary.uploader
 
 from database import (
     users_collection,
@@ -29,6 +30,14 @@ from services.ai_service import (
     build_prompt
 )
 from limiter import limiter
+
+# Configure Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+    secure=True
+)
 
 app = FastAPI(
     title="StayLocal API",
@@ -50,13 +59,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Upload directory initialization
-UPLOAD_DIR = os.getenv("UPLOAD_DIR", "uploads")
-if not os.path.exists(UPLOAD_DIR):
-    os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-app.mount("/uploads", StaticFiles(directory=UPLOAD_DIR), name="uploads")
-
 # Rate limiter setup
 app.state.limiter = limiter
 app.add_exception_handler(
@@ -67,12 +69,6 @@ app.add_middleware(SlowAPIMiddleware)
 
 # Include Authentication Router
 app.include_router(auth_router)
-
-
-# Helper function to generate full dynamic URLs for static uploaded files
-def get_base_url(request: Request) -> str:
-    """Dynamically construct base URL from incoming request headers."""
-    return str(request.base_url).rstrip("/")
 
 
 @app.get("/", status_code=status.HTTP_200_OK)
@@ -123,22 +119,18 @@ def search_listings(
 ):
     query = {}
 
-    # Search by city (case-insensitive substring)
     if city:
         query["city"] = {
             "$regex": city,
             "$options": "i"
         }
 
-    # Filter by category
     if category:
         query["category"] = category
 
-    # Filter by listing type
     if listingType:
         query["listingType"] = listingType
 
-    # Filter by price range
     if minPrice is not None or maxPrice is not None:
         query["price"] = {}
 
@@ -202,16 +194,12 @@ async def create_listing(
         if not existing:
             break
 
-    # Save uploaded image
-    filename = f"{listing_id}_{image.filename}"
-    filepath = os.path.join(UPLOAD_DIR, filename)
-
-    with open(filepath, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
-
-    # Dynamic base URL for deployment environments
-    base_url = get_base_url(request)
-    image_url = f"{base_url}/uploads/{filename}"
+    # Upload directly to Cloudinary
+    upload_result = cloudinary.uploader.upload(
+        image.file,
+        folder="staylocal_listings"
+    )
+    image_url = upload_result.get("secure_url")
 
     # Create listing document
     listing = {
@@ -259,7 +247,6 @@ async def update_listing(
     image: UploadFile = File(None),
     current_user=Depends(require_host)
 ):
-    # Check if listing exists
     existing = listings_collection.find_one(
         {"id": listing_id},
         {"_id": 0}
@@ -271,28 +258,22 @@ async def update_listing(
             detail="Listing not found"
         )
 
-    # Ensure the logged-in host owns this listing
     if existing["hostId"] != str(current_user["_id"]):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You can only update your own listings"
         )
 
-    # Keep existing image unless a new one is uploaded
     image_urls = existing.get("images", [])
 
     if image:
-        filename = f"{int(time.time())}_{image.filename}"
-        filepath = os.path.join(UPLOAD_DIR, filename)
-
-        with open(filepath, "wb") as buffer:
-            shutil.copyfileobj(image.file, buffer)
-
-        base_url = get_base_url(request)
-        image_url = f"{base_url}/uploads/{filename}"
+        upload_result = cloudinary.uploader.upload(
+            image.file,
+            folder="staylocal_listings"
+        )
+        image_url = upload_result.get("secure_url")
         image_urls = [image_url]
 
-    # Updated listing data
     updated_listing = {
         "id": listing_id,
         "hostId": existing["hostId"],
@@ -308,7 +289,6 @@ async def update_listing(
         "images": image_urls
     }
 
-    # Update MongoDB document
     listings_collection.update_one(
         {"id": listing_id},
         {"$set": updated_listing}
@@ -346,20 +326,6 @@ def delete_listing(
             detail="You can only delete your own listings"
         )
 
-    # Delete image files if they exist on disk
-    images = listing.get("images", [])
-    for image in images:
-        if "uploads/" in image:
-            filename = image.split("/")[-1]
-            filepath = os.path.join(UPLOAD_DIR, filename)
-
-            if os.path.exists(filepath):
-                try:
-                    os.remove(filepath)
-                except OSError:
-                    pass
-
-    # Delete from MongoDB
     listings_collection.delete_one({"id": listing_id})
 
     return {

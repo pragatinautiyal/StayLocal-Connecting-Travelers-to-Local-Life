@@ -1,0 +1,11 @@
+* [33m5230f07[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: refine dashboard, settings, and dark mode UI
+[31m|[m * [33mde2b1d1[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Create PROMPTS.md
+[31m|[m * [33mc06a060[m Update README.md
+[31m|[m * [33m7859b46[m Update README.md
+[31m|[m[31m/[m  
+* [33m3a58054[m feat: add AI itinerary planner with real-time platform listing recommendations
+* [33meb9d43e[m feat: revamp StayLocal listings with local business support, wishlist, improved listing management, and details page
+* [33m9ac63d7[m chore(project): update configuration and remove generated upload assets
+* [33mad87612[m feat(frontend): integrate authentication flow and protected routes
+* [33md5b8a2a[m feat(auth): implement JWT authentication, Google OAuth, and rate limiting
+* [33mb64f457[m feat(listings): implement create, update, delete, and manage listing functionality
