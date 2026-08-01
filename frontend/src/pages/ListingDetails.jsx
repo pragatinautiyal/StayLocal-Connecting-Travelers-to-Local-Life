@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Loader } from "../components/ui";
+import API_URL from "../api/config";
 
 export default function ListingDetails() {
   const { id } = useParams();
@@ -18,22 +19,17 @@ export default function ListingDetails() {
     // Fetch listing details and check initial wishlist status concurrently
     const fetchListingData = async () => {
       try {
-        const listingRes = await fetch(
-          `http://127.0.0.1:8000/api/listings/${id}`,
-        );
+        const listingRes = await fetch(`${API_URL}/api/listings/${id}`);
         const listingData = await listingRes.json();
         setListing(listingData);
 
         // Fetch wishlist IDs if the user is authenticated
         if (token) {
-          const wishlistRes = await fetch(
-            `http://127.0.0.1:8000/api/wishlist/ids`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+          const wishlistRes = await fetch(`${API_URL}/api/wishlist/ids`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
-          );
+          });
 
           if (wishlistRes.ok) {
             const wishlistIds = await wishlistRes.json();
@@ -62,7 +58,7 @@ export default function ListingDetails() {
     setWishlistLoading(true);
 
     try {
-      const endpoint = `http://127.0.0.1:8000/api/wishlist/${id}`;
+      const endpoint = `${API_URL}/api/wishlist/${id}`;
       const method = isWishlisted ? "DELETE" : "POST";
 
       const res = await fetch(endpoint, {

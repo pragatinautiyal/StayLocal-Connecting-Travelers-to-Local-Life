@@ -1,4 +1,6 @@
-const BASE_URL = "http://127.0.0.1:8000/api/auth";
+import API_URL from "./config";
+
+const BASE_URL = `${API_URL}/api/auth`;
 
 export async function login(email, password) {
   const response = await fetch(`${BASE_URL}/login`, {

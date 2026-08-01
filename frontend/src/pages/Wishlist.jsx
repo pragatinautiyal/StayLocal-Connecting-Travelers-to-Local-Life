@@ -3,6 +3,7 @@ import Card from "../components/Card";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Loader } from "../components/ui";
+import API_URL from "../api/config";
 
 export default function Wishlist() {
   const [listings, setListings] = useState([]);
@@ -24,7 +25,7 @@ export default function Wishlist() {
       return;
     }
 
-    fetch("http://127.0.0.1:8000/api/wishlist", {
+    fetch(`${API_URL}/api/wishlist`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -36,7 +37,6 @@ export default function Wishlist() {
         return res.json();
       })
       .then((data) => {
-        console.log("Wishlist data:", data);
         setListings(data);
       })
       .catch((err) => {
@@ -57,15 +57,12 @@ export default function Wishlist() {
     }
 
     try {
-      const res = await fetch(
-        `http://127.0.0.1:8000/api/wishlist/${listingId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await fetch(`${API_URL}/api/wishlist/${listingId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       const data = await res.json();
 

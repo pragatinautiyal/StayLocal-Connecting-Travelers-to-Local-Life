@@ -1,4 +1,6 @@
-const API = "http://127.0.0.1:8000";
+import API_URL from "./config";
+
+const API = API_URL;
 
 function getToken() {
   return localStorage.getItem("token");

@@ -4,6 +4,7 @@ import { Button, Loader } from "../components/ui";
 import { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import API_URL from "../api/config";
 
 export default function AIPlanner() {
   const [destination, setDestination] = useState("");
@@ -39,6 +40,24 @@ export default function AIPlanner() {
     return () => clearInterval(interval);
   }, [loading]);
 
+  // Helper function to resolve relative/absolute API image URLs cleanly across environments
+  const getListingImageUrl = (imgUrl) => {
+    const fallbackImage =
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80";
+
+    if (!imgUrl) return fallbackImage;
+
+    // Replace hardcoded localhost backend URLs with the dynamic configured API_URL
+    if (
+      imgUrl.includes("127.0.0.1:8000") ||
+      imgUrl.includes("localhost:8000")
+    ) {
+      return imgUrl.replace(/http:\/\/(127\.0\.0\.1|localhost):8000/, API_URL);
+    }
+
+    return imgUrl;
+  };
+
   const handleGenerate = async () => {
     setItinerary("");
     setListings([]);
@@ -52,7 +71,7 @@ export default function AIPlanner() {
     try {
       setLoading(true);
 
-      const response = await fetch("http://127.0.0.1:8000/api/ai-planner", {
+      const response = await fetch(`${API_URL}/api/ai-planner`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -182,15 +201,8 @@ export default function AIPlanner() {
                   </h3>
                   <div className="space-y-4">
                     {listings.map((item) => {
-                      let itemImg =
-                        item.images?.[0] ||
-                        "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=300&q=80";
-                      if (itemImg.includes("127.0.0.1:8000")) {
-                        itemImg = itemImg.replace(
-                          "http://127.0.0.1:8000",
-                          window.location.origin.replace("5173", "8000"),
-                        );
-                      }
+                      const itemImg = getListingImageUrl(item.images?.[0]);
+
                       return (
                         <div
                           key={item.id}
@@ -314,16 +326,7 @@ export default function AIPlanner() {
                         {listings.map((item) => {
                           const rawImages =
                             item.images || (item.image ? [item.image] : []);
-                          let displayImg =
-                            rawImages[0] ||
-                            "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80";
-
-                          if (displayImg.includes("127.0.0.1:8000")) {
-                            displayImg = displayImg.replace(
-                              "http://127.0.0.1:8000",
-                              window.location.origin.replace("5173", "8000"),
-                            );
-                          }
+                          const displayImg = getListingImageUrl(rawImages[0]);
 
                           return (
                             <div
@@ -441,18 +444,9 @@ export default function AIPlanner() {
                                 (foundListing.image
                                   ? [foundListing.image]
                                   : []);
-                              const processedImages = rawImages.map((img) => {
-                                if (img.includes("127.0.0.1:8000")) {
-                                  return img.replace(
-                                    "http://127.0.0.1:8000",
-                                    window.location.origin.replace(
-                                      "5173",
-                                      "8000",
-                                    ),
-                                  );
-                                }
-                                return img;
-                              });
+                              const processedImages = rawImages.map((img) =>
+                                getListingImageUrl(img),
+                              );
 
                               const finalImages =
                                 processedImages.length > 0

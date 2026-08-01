@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 
+import API_URL from "../api/config";
 export default function GoogleRegister() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,7 +17,6 @@ export default function GoogleRegister() {
   const [toast, setToast] = useState("");
 
   const userData = location.state;
-  console.log("Received state:", userData);
 
   useEffect(() => {
     if (!userData) {
@@ -29,7 +29,7 @@ export default function GoogleRegister() {
       setLoading(true);
 
       const response = await fetch(
-        "http://127.0.0.1:8000/api/auth/google/complete-registration",
+        `${API_URL}/api/auth/google/complete-registration`,
         {
           method: "POST",
           headers: {

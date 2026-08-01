@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Card from "../components/Card";
 import { Loader } from "../components/ui";
+import API_URL from "../api/config";
 
 export default function Explore() {
   const [listings, setListings] = useState([]);
@@ -33,8 +34,7 @@ export default function Explore() {
       setLoading(true);
       const token = localStorage.getItem("token");
 
-      let url = "http://127.0.0.1:8000/api/listings";
-
+      let url = `${API_URL}/api/listings`;
       if (city || category || listingType || budget) {
         const params = new URLSearchParams();
 
@@ -54,7 +54,7 @@ export default function Explore() {
           }
         }
 
-        url = `http://127.0.0.1:8000/api/listings/search?${params.toString()}`;
+        url = `${API_URL}/api/listings/search?${params.toString()}`;
       }
 
       try {
@@ -64,14 +64,11 @@ export default function Explore() {
         setListings(data);
 
         if (token) {
-          const wishRes = await fetch(
-            "http://127.0.0.1:8000/api/wishlist/ids",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+          const wishRes = await fetch(`${API_URL}/api/wishlist/ids`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
-          );
+          });
           if (wishRes.ok) {
             const ids = await wishRes.json();
             setWishlistIds(ids);
@@ -97,7 +94,7 @@ export default function Explore() {
     }
 
     const isSaved = wishlistIds.includes(listingId);
-    const endpoint = `http://127.0.0.1:8000/api/wishlist/${listingId}`;
+    const endpoint = `${API_URL}/api/wishlist/${listingId}`;
     const method = isSaved ? "DELETE" : "POST";
 
     try {

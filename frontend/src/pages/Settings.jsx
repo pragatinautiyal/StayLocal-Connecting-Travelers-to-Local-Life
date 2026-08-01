@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import { Input, Button } from "../components/ui";
 import { useNavigate } from "react-router-dom";
+import API_URL from "../api/config";
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -55,20 +56,17 @@ export default function Settings() {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch(
-        "http://localhost:8000/api/change-password",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            currentPassword,
-            newPassword,
-          }),
+      const response = await fetch(`${API_URL}/api/change-password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      });
 
       const data = await response.json();
 

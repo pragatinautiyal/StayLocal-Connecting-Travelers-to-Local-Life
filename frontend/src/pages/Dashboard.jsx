@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { Button, Loader } from "../components/ui";
+import API_URL from "../api/config";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -14,7 +15,7 @@ export default function Dashboard() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    fetch("http://127.0.0.1:8000/api/dashboard", {
+    fetch(`${API_URL}/api/dashboard`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

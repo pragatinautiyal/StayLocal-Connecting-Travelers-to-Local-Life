@@ -6,8 +6,6 @@ import { useParams } from "react-router-dom";
 export default function EditListing() {
   const { id } = useParams();
 
-  console.log("EditListing id:", id);
-
   return (
     <>
       <Navbar />

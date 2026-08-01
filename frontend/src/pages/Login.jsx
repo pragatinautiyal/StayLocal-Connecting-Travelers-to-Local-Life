@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import { GoogleLogin } from "@react-oauth/google";
+import API_URL from "../api/config";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -57,7 +58,7 @@ export default function Login() {
 
   const handleGoogleLogin = async (credentialResponse) => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/google", {
+      const response = await fetch(`${API_URL}/api/auth/google`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +69,6 @@ export default function Login() {
       });
 
       const data = await response.json();
-      console.log("Google API response:", data);
 
       if (!response.ok) {
         throw new Error(data.detail || "Google login failed");
