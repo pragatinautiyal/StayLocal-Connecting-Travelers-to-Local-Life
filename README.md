@@ -6,6 +6,22 @@ The platform allows local hosts to list homestays, cafés, workshops, restaurant
 
 ---
 
+# 🌐 Live Deployments & Hosting Details
+
+- **Live Frontend:**  https://stay-local-connecting-travelers-to.vercel.app
+- **Live Backend:**   https://staylocal-connecting-travelers-to-local.onrender.com
+
+---
+
+# Known Limitations (Free Tier)
+
+- The backend is hosted on **Render's free tier**, which automatically spins down after a period of inactivity.
+- The first request after the backend has been idle may take approximately **30–60 seconds** while the service wakes up.
+- AI itinerary generation may take slightly longer during cold starts due to backend wake-up time.
+- Free-tier hosting services may occasionally experience higher response times during periods of heavy usage.
+
+---
+
 # Tech Stack
 
 **Frontend**
@@ -18,7 +34,7 @@ The platform allows local hosts to list homestays, cafés, workshops, restaurant
 - Python
 
 **Database**
-- MongoDB Atlas
+- MongoDB Atlas (Cloud NoSQL)
 
 **AI**
 - Google Gemini API
@@ -222,6 +238,7 @@ Example:
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET_KEY=your_secret_key
 GEMINI_API_KEY=your_api_key
+...
 ```
 
 ## 5. Install Dependencies
