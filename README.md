@@ -1,178 +1,163 @@
 # StayLocal – Connecting Travelers to Local Life
-
-StayLocal is an AI-assisted full-stack web application that helps travellers discover authentic local experiences by connecting them with local hosts, businesses, and experiences.
-
-The platform allows local hosts to list homestays, cafés, workshops, restaurants, shopping experiences, wellness activities, and other local attractions, while travellers can explore destinations, save favourites, and generate AI-powered personalized itineraries based on listings available on the StayLocal platform.
+An AI-assisted full-stack web platform connecting travelers with authentic local hosts, stays, activities, and experiences.
 
 ---
 
-# 🌐 Live Deployments & Hosting Details
+# 🌐 Live Demo
 
-- **Live Frontend:**  https://stay-local-connecting-travelers-to.vercel.app
-- **Live Backend:**   https://staylocal-connecting-travelers-to-local.onrender.com
-
----
-
-# Known Limitations (Free Tier)
-
-- The backend is hosted on **Render's free tier**, which automatically spins down after a period of inactivity.
-- The first request after the backend has been idle may take approximately **30–60 seconds** while the service wakes up.
-- AI itinerary generation may take slightly longer during cold starts due to backend wake-up time.
-- Free-tier hosting services may occasionally experience higher response times during periods of heavy usage.
+- **Frontend App:**  https://stay-local-connecting-travelers-to.vercel.app
 
 ---
 
-# Tech Stack
+## 📸 Screenshots
 
-**Frontend**
-- React.js
-- React Router
-- Tailwind CSS
+### Home Page
+![Home Page](screenshots/home.png)
 
-**Backend**
-- FastAPI
-- Python
+### Explore Listings
+![Explore Listings](screenshots/explore.png)
 
-**Database**
-- MongoDB Atlas (Cloud NoSQL)
+### AI Travel Planner
+![AI Planner](screenshots/ai-planner.png)
 
-**AI**
-- Google Gemini API
+### Listing Management
+![Listing Management](screenshots/my-listings.png)
 
 ---
 
-# Key Features
+## ✨ Key Features
 
-- 🏡 Discover authentic local stays, businesses, and experiences
-- 🤖 AI-powered personalized travel itineraries using Google Gemini
-- ❤️ Wishlist to save favourite listings
-- 🔐 Secure JWT authentication with role-based access
-- 🖼️ Image upload support for hosts
-- 📍 Search listings by city
-- 📱 Responsive React frontend with Tailwind CSS
-
----
-
-# Database Choice
-
-StayLocal uses **MongoDB Atlas**, a cloud-based NoSQL database.
-
-### Why MongoDB?
-
-- Flexible document-based schema suitable for listing data.
-- Easily stores nested and dynamic data.
-- Integrates seamlessly with FastAPI.
-- Cloud-hosted with automatic backups and high availability.
-- Scalable for future features such as bookings, reviews, and notifications.
+- **Local Discovery & Multi-Way Filtering:** Search and explore homestays, cafés, workshops, local shopping, wellness activities, and regional events. Filter listings by price, or click interactive visual category cards (e.g., *Car Rental*, *Workshop*, *Café*) to instantly apply category filters.
+- **City-Based Search:** Search and locate authentic local experiences tailored to specific cities and travel types.
+- **AI-Powered Travel Itineraries:** Generate personalized, day-wise travel plans using Google Gemini, tightly integrated with live platform listings.
+- **Role-Based Access Control:** Dual dashboards tailored for **Hosts** and **Travelers**.
+- **Comprehensive Host Dashboard:** Dedicated portal for hosts to track geographic coverage across locations, review recent listings, and perform full CRUD management (create, edit, update, and delete listings).
+- **Wishlist Management:** Save and organize favorite local listings for quick access.
+- **Media Uploads:** Native image upload and storage support for listing creation.
 
 ---
 
-# Database Schema
+## 🛠️ Tech Stack
 
-
-![StayLocal Database Schema]
-<img width="1241" height="536" alt="Untitled(1)" src="https://github.com/user-attachments/assets/d40c9a50-304a-4d36-abec-605030869a13" />
-
-
-
----
-
-# Database Models
-
-## User
-
-- _id (Primary Key)
-- fullName
-- email
-- password
-- role (Host / Traveller)
-- phone
-- profileImage
-- isVerified
-- verificationStatus
-
-## Listing
-
-- id (Primary Key)
-- hostId (Foreign Key → User._id)
-- title
-- description
-- category (Stay, Food & Drink, Experience, Workshop, Shopping, Event, Wellness)
-- listingType (Homestay, Café, Restaurant, Pottery Workshop, Trek, etc.)
-- city
-- state
-- address
-- price
-- priceUnit (Per Night, Per Person, Per Ticket, Average Spend, Starting From)
-- images
-
-## Wishlist
-
-- userId (Foreign Key → User._id)
-- listingId (Foreign Key → Listing.id)
-- createdAt
-
-## AIPlannerRequest
-
-- destination
-- budget
-- days
-- travel_type
+- **Frontend:** React.js, React Router, Tailwind CSS, Vite
+- **Backend:** FastAPI, Python, Uvicorn, PyJWT, Passlib
+- **Database:** MongoDB Atlas (Cloud NoSQL)
+- **AI Integration:** Google Gemini API (`google-generativeai`)
+- **Hosting & Deployment:** Vercel (Frontend), Render (Backend)
 
 ---
 
-# Backend Features
+## 🚀 Setup Instructions
 
-- JWT Authentication
-- Role-Based Authorization
-- Protected Routes
-- Secure Password Hashing
-- Host Dashboard
-- Traveller Dashboard
-- CRUD Operations for Listings
-- Wishlist Management
-- Search Listings by City
-- AI Travel Planner powered by Google Gemini
-- AI Prompt Engineering using StayLocal Listings
-- Image Upload Support
-- MongoDB Atlas Integration
-- Global Exception Handling
-- CORS Configuration
-- Interactive Swagger API Documentation
+Follow these steps to run StayLocal locally on your machine.
+
+### Prerequisites
+
+- Node.js (v18 or later)
+- Python (v3.10 or later)
+- MongoDB Atlas account (or a local MongoDB server)
+- Google Gemini API key
 
 ---
 
-# AI Travel Planner
+### 1. Clone the Repository
 
-StayLocal integrates Google's Gemini API to generate personalized travel itineraries.
-
-The AI combines traveller preferences with StayLocal listings stored in MongoDB.
-
-Features
-
-- Personalized day-wise itinerary
-- Budget-aware recommendations
-- Prioritizes StayLocal hosts
-- Local food recommendations
-- Hidden gems
-- Transport suggestions
-- Budget summary
-
----
-  
-# Wishlist
-
-Travellers can save favourite listings to their personal wishlist for future planning.
-
-Features
-
-- Add listing
-- Remove listing
-- View saved listings
+```bash
+git clone https://github.com/pragatinautiyal/StayLocal-Connecting-Travelers-to-Local-Life.git
+cd StayLocal-Connecting-Travelers-to-Local-Life
+```
 
 ---
 
-# API Endpoints
+### 2. Backend Setup
+
+Navigate to the backend directory and create a virtual environment.
+
+```bash
+cd backend
+
+# Create a virtual environment
+python -m venv venv
+
+# Activate the virtual environment
+
+# Windows
+venv\Scripts\activate
+
+# macOS/Linux
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+#### Environment Variables
+
+Create a `.env` file inside the `backend/` directory and add the following:
+
+```env
+MONGO_URI=your_mongodb_connection_string
+DATABASE_NAME=staylocal
+
+JWT_SECRET=your_jwt_secret
+
+GOOGLE_CLIENT_ID=your_google_client_id
+
+GEMINI_API_KEY=your_gemini_api_key
+
+ALLOWED_ORIGINS=http://localhost:5173,https://your-frontend-domain.vercel.app
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
+
+#### Run the Backend Server
+
+```bash
+uvicorn main:app --reload
+```
+
+The backend will be available at:
+
+- API: http://127.0.0.1:8000
+- Swagger Documentation: http://127.0.0.1:8000/docs
+
+---
+
+### 3. Frontend Setup
+
+Open a new terminal window and navigate to the frontend directory.
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+```
+
+#### Environment Variables
+
+Create a `.env` file inside the `frontend/` directory and add the following:
+
+```env
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+#### Run the Frontend
+
+```bash
+npm run dev
+```
+
+The frontend will be be available at:
+
+- Application: `http://localhost:5173`
+
+---
+
+## 📡 API Documentation
 
 | Method | Endpoint | Description |
 |---------|----------|-------------|
@@ -196,88 +181,60 @@ Features
 
 ---
 
-# Database Setup
+### Example: User Login
 
-## 1. Create a MongoDB Atlas Account
+**Request**
 
-Create a free MongoDB Atlas cluster.
-
-## 2. Create a Database
-
-Database Name
-
-```
-staylocal
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
 ```
 
-Collections
+**Response**
 
-```
-listings
-users
-wishlist
-```
-
-## 3. Obtain the Connection String
-
-From MongoDB Atlas, copy your connection string.
-
-Example:
-
-```text
-mongodb+srv://<username>:<password>@cluster.mongodb.net/
-```
-
-## 4. Configure Environment Variables
-
-Create a `.env` file in the backend directory.
-
-Example:
-
-```env
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET_KEY=your_secret_key
-GEMINI_API_KEY=your_api_key
-...
-```
-
-## 5. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-## 6. Start the Backend
-
-```bash
-uvicorn test_app:app --reload
-```
-
-The API will run at
-
-```
-http://127.0.0.1:8000
+```json
+{
+  "access_token": "your_jwt_token",
+  "token_type": "bearer"
+}
 ```
 
 ---
 
-# Running the Frontend
+### Example: AI Travel Planner
 
-```bash
-cd frontend
-npm install
-npm run dev
+**Request**
+
+```json
+{
+  "destination": "Rishikesh",
+  "budget": "Medium",
+  "days": 3,
+  "travel_type": "Friends"
+}
 ```
 
-Frontend runs at
+**Response**
 
-```
-http://localhost:5173
+```json
+{
+  "itinerary": "Day-wise personalized travel plan generated successfully."
+}
 ```
 
 ---
 
-# Project Structure
+## 🏗️ Architecture & Folder Structure
+
+StayLocal follows a decoupled client-server architecture.
+
+- **Frontend:** Built with React.js and Vite, responsible for rendering the user interface, handling user interactions, and communicating with the backend through REST APIs.
+- **Backend:** Built with FastAPI, responsible for authentication, authorization, business logic, AI integration, and CRUD operations.
+- **Database:** MongoDB Atlas stores user accounts, listings, and wishlist data.
+- **AI:** Google Gemini API generates personalized travel itineraries based on user preferences and available StayLocal listings.
+
 
 ```text
 StayLocal/
@@ -312,16 +269,26 @@ StayLocal/
 
 ---
 
-# Future Enhancements
+## ⚠️ Known Limitations
 
-- Booking System
-- Payment Gateway Integration
-- Review & Rating System
-- Interactive Maps
-- Notifications
+- **Free-Tier Cold Starts:** The backend is hosted on Render's free tier and may take 30–60 seconds to respond after periods of inactivity.
+- **AI Response Time:** AI itinerary generation depends on Google Gemini API availability and may occasionally experience increased response times.
+- **Limited Search Functionality:** Listings can currently be searched by city. Advanced filters such as price range, category, ratings, and location radius are planned for future releases.
+- **Future Features:** Online booking, payment gateway integration, user reviews, ratings, and in-app messaging are not yet implemented.
 
 ---
 
-# License
+## 🤝 Credits & Acknowledgements
 
-This project is developed for educational and internship purposes.
+This project was developed as part of the **AI-Assisted Full Stack Web Development Internship** at **Technology Business Incubator (TBI), Graphic Era University**.
+
+Special thanks to:
+
+- **Google Gemini API** for AI-powered travel itinerary generation.
+- **MongoDB Atlas** for cloud database services.
+- **Render** for backend hosting.
+- **Vercel** for frontend deployment.
+- **Cloudinary** for cloud-based image storage and management.
+- **React**, **FastAPI**, **Tailwind CSS**, **PyMongo**, **Uvicorn**, and other open-source libraries used throughout the project.
+
+
