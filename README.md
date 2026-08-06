@@ -21,7 +21,7 @@ An AI-assisted full-stack web platform connecting travelers with authentic local
 ![AI Planner](screenshots/ai-planner.png)
 
 ### Listing Management
-![Listing Management](screenshots/my-listings.png)
+![Listing Management](screenshots/listing-management.png)
 
 ---
 
